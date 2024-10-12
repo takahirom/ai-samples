@@ -75,14 +75,26 @@ class EntryChoiceActivity : AppCompatActivity() {
       DownloadConfig(
         object : DownloadCallback {
           override fun onDownloadStarted(bytesToDownload: Long) {
+            Log.d(TAG, "Downloading model: $bytesToDownload bytes")
             totalBytesToDownload = bytesToDownload
+          }
+
+          override fun onDownloadPending() {
+            super.onDownloadPending()
+            Log.d(TAG, "Download pending.")
           }
 
           override fun onDownloadFailed(failureStatus: String, e: GenerativeAIException) {
             Log.e(TAG, "Failed to download model.", e)
           }
 
+          override fun onDownloadDidNotStart(e: GenerativeAIException) {
+            super.onDownloadDidNotStart(e)
+            Log.e(TAG, "Download did not start.", e)
+          }
+
           override fun onDownloadProgress(totalBytesDownloaded: Long) {
+            Log.d(TAG, "Downloaded $totalBytesDownloaded bytes")
             if (totalBytesToDownload > 0) {
               downloadProgressTextView?.visibility = View.VISIBLE
               downloadProgressTextView?.text =
@@ -97,6 +109,7 @@ class EntryChoiceActivity : AppCompatActivity() {
           }
 
           override fun onDownloadCompleted() {
+            Log.d(TAG, "Download completed.")
             modelDownloaded = true
           }
         }
